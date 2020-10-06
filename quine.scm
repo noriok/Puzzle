@@ -1,2 +1,1 @@
-((lambda (x) (list x (list (quote quote) x)))
- (quote (lambda (x) (list x (list (quote quote) x)))))
+((lambda (x) (list x (list 'quote x))) '(lambda (x) (list x (list 'quote x))))
