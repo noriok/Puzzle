@@ -1,0 +1,5 @@
+(define (hanoi n a b c)
+  (when (> n 0)
+    (hanoi (- n 1) a c b)
+    (print #"~n : ~a -> ~b")
+    (hanoi (- n 1) c b a)))
