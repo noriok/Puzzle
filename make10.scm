@@ -1,16 +1,17 @@
 (use gauche.generator)
 (use util.combinations)
 (use util.match)
+(use srfi-42) ; do-ec
 
-(define (make10 digits)
-  (make-n digits 10))
+(define (make10 a b c d)
+  (make (list a b c d) 10))
 
-(define (make-n digits goal)
-  (dolist (ds (permutations* (sort digits)))
-    (do-generator (rpn (make-rpn ds))
-      (and-let* ((ret (eval rpn))
-                 ((= ret goal)))
-        (print (rpn->expr rpn))))))
+(define (make digits goal)
+  (do-ec (: ds (permutations* (sort digits)))
+         (: rpn (make-rpn ds))
+         (and-let* ((ret (eval rpn))
+                    ((= ret goal)))
+           (print (rpn->expr rpn)))))
 
 ;; 逆ポーランド記法の式を生成
 (define (make-rpn digits)
