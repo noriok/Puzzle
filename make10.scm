@@ -8,9 +8,9 @@
 (define (make-n digits goal)
   (dolist (ds (permutations* (sort digits)))
     (do-generator (rpn (make-rpn ds))
-      (let ((ret (eval rpn)))
-        (if (and ret (= ret goal))
-            (print (rpn->expr rpn)))))))
+      (and-let* ((ret (eval rpn))
+                 ((= ret goal)))
+        (print (rpn->expr rpn))))))
 
 ;; 逆ポーランド記法の式を生成
 (define (make-rpn digits)
