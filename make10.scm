@@ -1,5 +1,6 @@
 (use gauche.generator)
 (use util.combinations)
+(use util.match)
 
 (define (make10 digits)
   (make-n digits 10))
@@ -37,38 +38,22 @@
 (define (eval rpn)
   (call/cc
    (lambda (break)
-     (let loop ((rpn rpn)
-                (stack ()))
-       (cond ((null? rpn)
-              (car stack))
-             ((integer? (car rpn))
-              (loop (cdr rpn)
-                    (cons (car rpn) stack)))
-             (else
-              (let ((b (car  stack))
-                    (a (cadr stack)))
-                (let ((x (case (car rpn)
-                           ((+) (+ a b))
-                           ((-) (- a b))
-                           ((*) (* a b))
-                           ((/) (if (= b 0) ; zero division
-                                    (break #f)
-                                    (/ a b))))))
-                  (loop (cdr rpn)
-                        (cons x (cddr stack)))))))))))
-
+     (car (fold (^[lhs rhs]
+                  (match (cons lhs rhs)
+                    (('+ a b . xs) (cons (+ b a) xs))
+                    (('- a b . xs) (cons (- b a) xs))
+                    (('* a b . xs) (cons (* b a) xs))
+                    (('/ 0 b . xs) (break #f)) ; zero division
+                    (('/ a b . xs) (cons (/ b a) xs))
+                    (else (cons lhs rhs))))
+                ()
+                rpn)))))
 
 (define (rpn->expr rpn)
-  (let loop ((rpn rpn)
-             (stack ()))
-    (cond ((null? rpn)
-           (car stack))
-          ((integer? (car rpn))
-           (loop (cdr rpn)
-                 (cons (car rpn) stack)))
-          (else
-           (let ((b (car  stack))
-                 (a (cadr stack)))
-             (loop (cdr rpn)
-                   (cons (format "(~a~a~a)" a (car rpn) b)
-                         (cddr stack))))))))
+  (car (fold (^[lhs rhs]
+               (if (symbol? lhs)
+                   (match rhs
+                     ((a b . xs) (cons #"(~|b|~|lhs|~|a|)" xs)))
+                   (cons lhs rhs)))
+             ()
+             rpn)))
