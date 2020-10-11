@@ -12,8 +12,7 @@
 (define (pascal n)
 
   (define (f lis)
-    (let ((x (map (cut fold + 0 <>)
-                  (zip lis (drop lis 1)))))
+    (let1 x (map + lis (drop lis 1))
       (append '(1) x '(1))))
 
   (generator->list (iterate f '(1)) n))
