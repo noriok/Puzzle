@@ -53,7 +53,7 @@
   (car (fold (^[lhs rhs]
                (if (symbol? lhs)
                    (match rhs
-                     ((a b . xs) (cons #"(~|b|~|lhs|~|a|)" xs)))
+                     ((a b . xs) (cons (list b lhs a) xs)))
                    (cons lhs rhs)))
              ()
              rpn)))
