@@ -37,18 +37,17 @@
 
 ;; 逆ポーランド記法の式を評価
 (define (eval rpn)
-  (call/cc
-   (lambda (break)
-     (car (fold (^[lhs rhs]
-                  (match (cons lhs rhs)
-                    (('+ a b . xs) (cons (+ b a) xs))
-                    (('- a b . xs) (cons (- b a) xs))
-                    (('* a b . xs) (cons (* b a) xs))
-                    (('/ 0 b . xs) (break #f)) ; zero division
-                    (('/ a b . xs) (cons (/ b a) xs))
-                    (else (cons lhs rhs))))
-                ()
-                rpn)))))
+  (let/cc return
+    (car (fold (^[lhs rhs]
+                 (match (cons lhs rhs)
+                   (('+ a b . xs) (cons (+ b a) xs))
+                   (('- a b . xs) (cons (- b a) xs))
+                   (('* a b . xs) (cons (* b a) xs))
+                   (('/ 0 b . xs) (return #f)) ; zero division
+                   (('/ a b . xs) (cons (/ b a) xs))
+                   (else (cons lhs rhs))))
+               ()
+               rpn))))
 
 (define (rpn->expr rpn)
   (car (fold (^[lhs rhs]
