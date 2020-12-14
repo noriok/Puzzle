@@ -4,9 +4,6 @@
 ;; Look-and-say sequence
 ;; https://en.wikipedia.org/wiki/Look-and-say_sequence
 
-(define (giterate f x)
-  (gunfold (^a #f) (^a a) f x))
-
 (define (look-and-say s)
   ($ list->string
      $ concatenate
