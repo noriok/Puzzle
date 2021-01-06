@@ -1,21 +1,12 @@
 (use gauche.generator)
 (use scheme.list)
 
-(define (iterate f x)
-   (generate
-    (^[yield]
-      (let loop ((x x))
-        (yield x)
-        (loop (f x))))))
-
 ;; pascal's triangle with n rows
 (define (pascal n)
-
   (define (f lis)
     (let1 x (map + lis (drop lis 1))
       (append '(1) x '(1))))
-
-  (generator->list (iterate f '(1)) n))
+  (generator->list (giterate f '(1)) n))
 
 #|
 
