@@ -1,6 +1,5 @@
 (use gauche.generator)
 
-
 (define (gfibs)
   (generate
    (^(yield)
